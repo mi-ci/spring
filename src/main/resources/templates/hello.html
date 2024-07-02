@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Input Form</title>
+</head>
+<body>
+<form action="/getOcid" method="get">
+    <label for="characterName">캐릭터명:</label>
+    <input type="text" id="characterName" name="characterName" />
+    <button type="submit">Submit</button>
+</form>
+
+<!-- Display OCID response -->
+<div th:if="${character_class}">
+    <h3>직업: <span th:text="${character_class}"></span></h3>
+</div>
+<div th:if="${character_class_level}">
+    <h3>차수: <span th:text="${character_class_level}"></span></h3>
+</div>
+<div th:if="${character_level}">
+    <h3>레벨: <span th:text="${character_level}"></span></h3>
+</div>
+</body>
+</html>
