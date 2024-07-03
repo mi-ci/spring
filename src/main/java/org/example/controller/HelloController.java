@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
@@ -105,11 +106,84 @@ public class HelloController {
         }
 
 
-        // //////////////////////////////////////////////////////////////
 
 
 
         // Return the Thymeleaf template to render (hello.html)
         return "hello";
+    }
+    @GetMapping("/getOcid2")
+    @ResponseBody
+    public Map<String, Object> getOcid2(@RequestParam("characterName") String characterName) {
+        System.out.println(characterName);
+        // Set headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", "application/json");
+        headers.set("x-nxopen-api-key", "test_c3c7513e49d03f4c0d14389cf14e274f5504d6b6b0f373662f022b8f07304e4b356397c41c1a3eef638d09601b2f4f18");
+
+        // Build URL
+        String apiUrl = "https://open.api.nexon.com/maplestory/v1/id?character_name=" + characterName;
+
+        // Create a new RestTemplate instance
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Make the GET request
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<Map> response = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, Map.class);
+
+        Map<String, Object> responseBody = response.getBody();
+
+        String ocid = responseBody.get("ocid").toString();
+
+        HttpHeaders headers2 = new HttpHeaders();
+        headers2.set("Accept", "application/json");
+        headers2.set("x-nxopen-api-key", "test_c3c7513e49d03f4c0d14389cf14e274f5504d6b6b0f373662f022b8f07304e4b356397c41c1a3eef638d09601b2f4f18");
+
+        // Build URL
+        String apiUrl2 = "https://open.api.nexon.com/maplestory/v1/character/basic?ocid=" + ocid;
+
+        // Create a new RestTemplate instance
+        RestTemplate restTemplate2 = new RestTemplate();
+
+                // Make the GET request
+        HttpEntity<String> entity2 = new HttpEntity<>(headers);
+        ResponseEntity<Map> response2 = restTemplate2.exchange(apiUrl2, HttpMethod.GET, entity2, Map.class);
+        Map<String, Object> responseBody2 = response2.getBody();
+        String cl = responseBody2.get("character_level").toString();
+        Map<String, Object> res = new HashMap<>();
+        res.put("cl", cl);
+        return res;
+    }
+
+    @GetMapping("/getItem")
+    @ResponseBody
+    public Map<String, Object> getItem(@RequestParam("characterName") String characterName) {
+        System.out.println(characterName);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", "application/json");
+        headers.set("x-nxopen-api-key", "test_c3c7513e49d03f4c0d14389cf14e274f5504d6b6b0f373662f022b8f07304e4b356397c41c1a3eef638d09601b2f4f18");
+
+        String apiUrl = "https://open.api.nexon.com/maplestory/v1/id?character_name=" + characterName;
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<Map> response = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, Map.class);
+        Map<String, Object> responseBody = response.getBody();
+        String ocid = responseBody.get("ocid").toString();
+
+        HttpHeaders headers2 = new HttpHeaders();
+        headers2.set("Accept", "application/json");
+        headers2.set("x-nxopen-api-key", "test_c3c7513e49d03f4c0d14389cf14e274f5504d6b6b0f373662f022b8f07304e4b356397c41c1a3eef638d09601b2f4f18");
+
+        // Build URL
+        String apiUrl2 = "https://open.api.nexon.com/maplestory/v1/character/item-equipment?ocid=" + ocid;
+
+        // Create a new RestTemplate instance
+        RestTemplate restTemplate2 = new RestTemplate();
+
+        // Make the GET request
+        HttpEntity<String> entity2 = new HttpEntity<>(headers);
+        ResponseEntity<Map> response2 = restTemplate2.exchange(apiUrl2, HttpMethod.GET, entity2, Map.class);
+        Map<String, Object> responseBody2 = response2.getBody();
+        return responseBody2.get('item_equipment');
     }
 }
